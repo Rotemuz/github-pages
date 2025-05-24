@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Albert - בוט WhatsApp למנהל מבנה חכם</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    color: white;
+    height: 100vh;
+    width: 100vw;
+}
+
+.presentation-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    padding: 2rem;
+    overflow: hidden;
+}
+
+.slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide.prev {
+    transform: translateX(-100px);
+}
+
+/* Slide 1 - Title */
+.slide-1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    text-align: center;
+}
+
+.slide-1 h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.slide-1 .subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.albert-logo {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    margin: 2rem auto;
+    animation: pulse 2s infinite;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Slide 2 - Solutions */
+.slide-2 {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.solutions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.solution-item {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: slideInRight 0.8s ease-out;
+    text-align: center;
+}
+
+.solution-item:nth-child(2) { animation-delay: 0.2s; }
+.solution-item:nth-child(3) { animation-delay: 0.4s; }
+.solution-item:nth-child(4) { animation-delay: 0.6s; }
+
+.solution-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Demo slides (3, 4, 5) */
+.slide-3 {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.slide-4 {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.slide-5 {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.demo-container {
+    display: flex;
+    gap: 4rem;
+    width: 100%;
+    max-width: 1400px;
+    align-items: center;
+}
+
+.whatsapp-mockup {
+    width: 350px;
+    height: 700px;
+    background: #0a0a0a;
+    border-radius: 25px;
+    padding: 10px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.whatsapp-screen {
+    width: 100%;
+    height: 100%;
+    background: #0b141a;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.whatsapp-header {
+    background: #202c33;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #2a3942;
+}
+
+.group-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.group-info h3 {
+    color: #e9edef;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.group-info p {
+    color: #8696a0;
+    font-size: 12px;
+}
+
+.chat-area {
+    height: calc(100% - 120px);
+    padding: 20px 15px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    animation: messageSlideIn 0.5s ease-out;
+}
+
+.message.user {
+    text-align: left;
+}
+
+.message.albert {
+    text-align: right;
+}
+
+.message-bubble {
+    display: inline-block;
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.message.user .message-bubble {
+    background: #202c33;
+    color: #e9edef;
+    border-bottom-right-radius: 5px;
+}
+
+.message.albert .message-bubble {
+    background: #005c4b;
+    color: #e9edef;
+    border-bottom-left-radius: 5px;
+}
+
+.albert-indicator {
+    color: #25D366;
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.demo-explanation {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.demo-step {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.demo-step:nth-child(2) { animation-delay: 0.3s; }
+.demo-step:nth-child(3) { animation-delay: 0.6s; }
+.demo-step:nth-child(4) { animation-delay: 0.9s; }
+
+.demo-step h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Slide 6 - Competitive Advantages */
+.slide-6 {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.advantages-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.advantage-item {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+    animation: slideInUp 0.8s ease-out;
+}
+
+.advantage-item:nth-child(2) { animation-delay: 0.2s; }
+.advantage-item:nth-child(3) { animation-delay: 0.4s; }
+.advantage-item:nth-child(4) { animation-delay: 0.6s; }
+
+.advantage-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Slide 7 - Implementation & Business Model */
+.slide-7 {
+    background: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+}
+
+.implementation-container {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+}
+
+.economic-model {
+    background: rgba(255,255,255,0.1);
+    padding: 3rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 3rem;
+}
+
+.timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.timeline-item {
+    background: rgba(255,255,255,0.1);
+    padding: 1.5rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out forwards;
+}
+
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.4s; }
+.timeline-item:nth-child(4) { animation-delay: 0.6s; }
+.timeline-item:nth-child(5) { animation-delay: 0.8s; }
+
+.timeline-number {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    color: #4834d4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 auto 1rem;
+}
+
+.timeline-duration {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+/* Slide 8 - Cost Analysis */
+.slide-8 {
+    background: linear-gradient(135deg, #7e1d7e 0%, #9f5bec 100%);
+}
+
+.cost-container {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+}
+
+.cost-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cost-item {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: slideInUp 0.8s ease-out;
+    text-align: center;
+}
+
+.cost-item:nth-child(2) { animation-delay: 0.2s; }
+.cost-item:nth-child(3) { animation-delay: 0.4s; }
+
+.total-cost {
+    background: rgba(255,255,255,0.2);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Slide 9 - Target Market */
+.slide-9 {
+    background: linear-gradient(135deg, #667eea 0%, #3b9ad1 100%);
+    text-align: center;
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem 0;
+}
+
+.market-item {
+    background: rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+    animation: slideInUp 0.8s ease-out;
+}
+
+.market-item:nth-child(2) { animation-delay: 0.2s; }
+.market-item:nth-child(3) { animation-delay: 0.4s; }
+
+/* Slide 10 - Call to Action */
+.slide-10 {
+    background: linear-gradient(135deg, #667eea 0%, #30ec17 100%);
+    text-align: center;
+}
+
+/* Navigation */
+.nav-controls {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    gap: 1rem;
+    z-index: 1000;
+}
+
+.nav-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: background 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.slide-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(255,255,255,0.2);
+    padding: 10px 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .slide {
+        padding: 1rem;
+    }
+    
+    .demo-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .whatsapp-mockup {
+        width: 300px;
+        height: 600px;
+        margin: 0 auto;
+    }
+    
+    .solutions-grid, .advantages-grid, .market-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .timeline {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cost-breakdown {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+    
+    .slide-1 h1 {
+        font-size: 2.5rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+    }
+}
+</style>
+</head>
+<body>
+<div class="presentation-container">
+
+<!-- Slide 1: Title -->
+<div class="slide slide-1 active">
+    <div class="albert-logo">🤖</div>
+    <h1>Albert</h1>
+    <p class="subtitle">בוט WhatsApp חכם לניהול מבנים</p>
+    <p style="font-size: 1.2rem; opacity: 0.8;">מהפכת ה-AI  בניהול נכסים</p>
+</div>
+
+<!-- Slide 2: Solutions -->
+<div class="slide slide-2">
+    <h1 style="margin-bottom: 3rem; text-align: center;">הפתרונות המוצעים</h1>
+    <div class="solutions-grid">
+        <div class="solution-item">
+            <div class="solution-icon">⚡</div>
+            <h3>הפחתת העומס התפעולי</h3>
+            <p>הפחתת העומס התפעולי על מוקד השירות בפניות חוזרות ונשנות לגבי אותה בעיה</p>
+        </div>
+        <div class="solution-item">
+            <div class="solution-icon">🚀</div>
+            <h3>שיפור זמני התגובה</h3>
+            <p>שיפור זמני התגובה לפתרון תקלה והעברת המידע בצורה מהירה</p>
+        </div>
+        <div class="solution-item">
+            <div class="solution-icon">🚨</div>
+            <h3>ניהול חירום יעיל</h3>
+            <p>עדכון הדיירים במצבי חירום והצעת דרכי התגוננות או תגובה לכל תרחיש</p>
+        </div>
+        <div class="solution-item">
+            <div class="solution-icon">💬</div>
+            <h3>שיפור התקשורת</h3>
+            <p>שיפור התקשורת בין הדיירים לרשויות ובין הדיירים לחברת האחזקה</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Elevator Demo -->
+<div class="slide slide-3">
+    <h1 style="margin-bottom: 2rem; text-align: center;">זיהוי מוקדם וטיפול יזום</h1>
+    <div class="demo-container">
+        <div class="whatsapp-mockup">
+            <div class="whatsapp-screen">
+                <div class="whatsapp-header">
+                    <div class="group-avatar">🏢</div>
+                    <div class="group-info">
+                        <h3>דיירי המבנה - רחוב ירדן 23</h3>
+                        <p>185 חברים</p>
+                    </div>
+                </div>
+                <div class="chat-area" id="elevatorChat">
+                    <div class="message user">
+                        <div class="message-bubble">יש בעיה עם מעלית ב'! היא תקועה 😨</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-explanation">
+            <div class="demo-step">
+                <h3><span class="step-number">1</span>זיהוי אוטומטי</h3>
+                <p>Albert מזהה מיידית מילות מפתח כמו "מעלית תקועה" ומפעיל פרוטוקול חירום</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">2</span>העברה למוקדנית</h3>
+                <p>התראה מיידית למוקדנית עם פרטי המיקום והבעיה - לפני שנוצר "רעש" במבנה</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">3</span>מענה מקצועי</h3>
+                <p>המוקדנית מתקשרת לדייר ופותחת קריאת שירות בלחיצת כפתור (אינטגרציה למערכת פתיחת קריאות במוקד)</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">4</span>עדכון לדיירים</h3>
+                <p>Albert מעדכן את כל הדיירים על הטיפול, מציע פתרונות זמניים ומעדכן סטטוס טיפול בתקלה וצפי</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Emergency Demo -->
+<div class="slide slide-4">
+    <h1 style="margin-bottom: 2rem; text-align: center;">ניהול מצבי חירום</h1>
+    <div class="demo-container">
+        <div class="whatsapp-mockup">
+            <div class="whatsapp-screen">
+                <div class="whatsapp-header">
+                    <div class="group-avatar">🏢</div>
+                    <div class="group-info">
+                        <h3>דיירי הבניין - רחוב ירדן 23</h3>
+                        <p>185 חברים</p>
+                    </div>
+                </div>
+                <div class="chat-area" id="emergencyChat">
+                    <div class="message albert emergency-alert">
+                        <div class="albert-indicator">Albert - מנהל הבניין</div>
+                        <div class="message-bubble">🚨 התראת צבע אדום - אזור תל אביב<br>⏰ זמן להגעה: 90 שניות<br>🏠 כל הדיירים - היכנסו למרחב המוגן</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-explanation">
+            <div class="demo-step">
+                <h3><span class="step-number">1</span>אינטגרציה עם רשויות חירום</h3>
+                <p>קבלת התראות בזמן אמת על ירי טילים, רעידות אדמה ומצבי חירום נוספים</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">2</span>הנחיות מותאמות למבנה</h3>
+                <p>מידע ספציפי על מרחבים מוגנים, נתיבי פינוי והוראות בטיחות לפי מיקום המבנה</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">3</span>עדכונים רציפים</h3>
+                <p>מעקב אחר סטטוס ההתראה ועדכון מיידי כשההתראה מבוטלת</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">4</span>תיאום עם כוחות חירום</h3>
+                <p>במקרה של שריפה או אירוע חריג - העברת התראה מיידית למוקד על אירוע חירום במבנה</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Municipal Integration Demo -->
+<div class="slide slide-5">
+    <h1 style="margin-bottom: 2rem; text-align: center;">אינטגרציה עם רשויות מקומיות</h1>
+    <div class="demo-container">
+        <div class="whatsapp-mockup">
+            <div class="whatsapp-screen">
+                <div class="whatsapp-header">
+                    <div class="group-avatar">🏢</div>
+                    <div class="group-info">
+                        <h3>דיירי הבניין - רחוב ירדן 23</h3>
+                        <p>185 חברים</p>
+                    </div>
+                </div>
+                <div class="chat-area" id="municipalChat">
+                    <div class="message albert">
+                        <div class="albert-indicator">Albert - מנהל הבניין</div>
+                        <div class="message-bubble">💧 עדכון חשוב: הפסקת מים מתוכננת<br>📅 מחר 14:00-18:00<br>📍 רחובות ירדן, בן יהודה, דיזנגוף<br>🚰 מומלץ להצטייד במים מראש</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-explanation">
+            <div class="demo-step">
+                <h3><span class="step-number">1</span>הפסקות יזומות ותקלות</h3>
+                <p>עדכונים אוטומטיים מחברת החשמל, מקורות ורשויות על הפסקות מתוכננות ותקלות פתאומיות</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">2</span>פינוי פסולת חכם</h3>
+                <p>התראות על שינויים בלוח הזמנים בגלל חגים, שביתות או מזג אויר</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">3</span>עבודות ברחוב</h3>
+                <p>מידע על סגירות כבישים, עבודות תשתית ושינויים בתחבורה ציבורית</p>
+            </div>
+            <div class="demo-step">
+                <h3><span class="step-number">4</span>שירותים עירוניים</h3>
+                <p>עדכונים על שעות פעילות של מוסדות ציבור, פארקים ושירותים קהילתיים</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Competitive Advantages -->
+<div class="slide slide-6">
+    <h1 style="margin-bottom: 3rem; text-align: center;">יתרונות תחרותיים</h1>
+    <div class="advantages-grid">
+        <div class="advantage-item">
+            <div class="advantage-icon">⚡</div>
+            <h3>שיפור מהירות התגובה</h3>
+            <p>מעבר מזמני תגובה איטיים וסירבול בהעברת דיווחים לשירות מהיר ויעיל במינימום מאמץ</p>
+        </div>
+        <div class="advantage-item">
+            <div class="advantage-icon">🎯</div>
+            <h3>שיפור השירות ללקוח</h3>
+            <p>העלאת שביעות רצון הדיירים ושיפור השירות</p>
+        </div>
+        <div class="advantage-item">
+            <div class="advantage-icon">👥</div>
+            <h3>חיסכון במשאבי כ"א</h3>
+            <p>הפחתה משמעותית בעומס על צוות המוקד - יותר זמן למקרים מורכבים</p>
+        </div>
+        <div class="advantage-item">
+            <div class="advantage-icon">🏆</div>
+            <h3>בידול בשוק</h3>
+            <p>הבוט הישראלי הראשון בשפה עברית עם אינטגרציה מלאה לרשויות החירום, רשויות מקומיות וחברת האחזקה</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Implementation & Business Model -->
+<div class="slide slide-7">
+    <div class="implementation-container">
+        <div class="economic-model">
+            <h2 style="margin-bottom: 2rem;">מודל הכנסות</h2>
+            <p style="font-size: 1.3rem; line-height: 1.6;">
+                דמי מנוי חודשיים ייגבו כחלק מחבילת השירות בהצעת המחיר או כעלות נפרדת גלויה כך שיכסה את עלויות תפעול המערכת התשתית והתחזוקה
+            </p>
+        </div>
+
+        <h2 style="margin-bottom: 2rem;">אבני דרך</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-number">1</div>
+                <h3>מחקר שוק ופיתוח</h3>
+                <p>זמן פיתוח ומחקר שוק מקיף</p>
+                <div class="timeline-duration">3 חודשים</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-number">2</div>
+                <h3>פיילוט</h3>
+                <p>בדיקה ב-2-3 מבנים</p>
+                <div class="timeline-duration">2 חודשים</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-number">3</div>
+                <h3>הרחבה</h3>
+                <p>הרחבת השירות למספר מבנים משמעותי</p>
+                <div class="timeline-duration">2 חודשים</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-number">4</div>
+                <h3>אופטימיזציה</h3>
+                <p>שיפורים ייבוצעו כל הזמן</p>
+                <div class="timeline-duration">שוטף</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-number">5</div>
+                <h3>גמר פרויקט</h3>
+                <p>Go to market שלב ראשון</p>
+                <div class="timeline-duration">7 חודשים</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Cost Analysis -->
+<div class="slide slide-8">
+    <div class="cost-container">
+        <h1 style="margin-bottom: 2rem;">עלויות</h1>
+        
+        <div class="cost-breakdown">
+            <div class="cost-item">
+                <h3>👨‍💼 מנהל פרויקט</h3>
+                <p><strong>₪35,000 לחודש</strong><br>ניהול הפרויקט </p>
+            </div>
+            <div class="cost-item">
+                <h3>👨‍💻 2 מתכנתים</h3>
+                <p><strong>₪35,000 לחודש כל אחד</strong><br>פיתוח המערכת</p>
+            </div>
+            <div class="cost-item">
+                <h3>🏢 Overhead</h3>
+                <p><strong>₪100,000 </strong><br>  סביבת פיתוח,יועצים,תשתיות</p>
+            </div>
+        </div>
+
+        <div class="total-cost">
+            <h2>סה"כ השקעה</h2>
+            <div style="font-size: 2.5rem; color: #fff; margin: 1rem 0;">
+                ₪835,000
+            </div>
+            <p>  השקעה  לפיתוח  Albert והשקת השלב הראשון </p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Target Market -->
+<div class="slide slide-9">
+    <h1 style="margin-bottom: 2rem;">התאמה לאלקטרה</h1>
+    <p style="font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">
+        Albert מתאים במיוחד לחברת   <strong>אלקטרה</strong>
+    </p>
+    
+    <div class="market-grid">
+        <div class="market-item">
+            <h3>🏢 שלב ראשון</h3>
+            <p><strong>מבנים מגורים</strong><br>התחלה עם הלקוחות הקיימים של אלקטרה</p>
+        </div>
+        <div class="market-item">
+            <h3>🏭 שלב שני</h3>
+            <p><strong>מוסדות מדינה</strong><br>תחנות דלק, משטרה, חברות הייטק</p>
+        </div>
+        <div class="market-item">
+            <h3>🏗️ שלב שלישי</h3>
+            <p><strong>מפעלי תעשייה</strong><br>מחלקות אחזקה במפעלים גדולים</p>
+        </div>
+    </div>
+
+    <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 15px; margin-top: 2rem; backdrop-filter: blur(10px);">
+      
+        <p style="font-size: 1.2rem; line-height: 1.8; text-align: right;">
+            ✅ הובלת השוק בטכנולוגיות חדשניות<br>
+            ✅ שיפור ההתייעלות הארגונית<br>
+            ✅ קהל לקוחות קיים רחב ומגוון<br>
+            ✅ מוניטין וניסיון רב שנים בתחום<br>
+            ✅ מבא לעתיד - מבני מגורים צפוים להיות מעל 30 קומות ויתופעלו על ידי חברות אחזקה מתקדמות
+        </p>
+    </div>
+</div>
+
+<!-- Slide 10: Call to Action -->
+<div class="slide slide-10">
+    <h1 style="margin-bottom: 3rem; text-align: center;">הזדמנות להוביל חדשנות</h1>
+    
+    <div style="background: rgba(255,255,255,0.1); padding: 3rem; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); max-width: 900px; margin: 0 auto; text-align: center;">
+        <p style="font-size: 1.8rem; margin-bottom: 2rem; line-height: 1.6; text-align: center;">
+            Albert מייצג את העתיד של ניהול מבנים חכמים
+        </p>
+        
+        <div style="font-size: 1.3rem; line-height: 2; margin-bottom: 2rem; text-align: right; direction: rtl; max-width: 700px; margin-left: auto; margin-right: auto;">
+            <div style="margin-bottom: 1rem;"><strong>🚀 היתרון הראשון בשוק:</strong> בוט WhatsApp עברי עם אינטגרציה מלאה לרשויות ישראליות</div>
+            <div style="margin-bottom: 1rem;"><strong>⏰ זמן יישום:</strong> 7 חודשים בלבד</div>
+            <div style="margin-bottom: 1rem;"><strong>📈 פוטנציאל עסקי:</strong> עצום - מבנים, מפעלים, מוסדות</div>
+            <div><strong>🏆 התוצאה:</strong> אלקטרה מובילה בטכנולוגיה חכמה</div>
+        </div>
+        
+        <div style="margin-top: 2rem; font-size: 1.1rem; opacity: 0.9;">
+            הזמן להוביל את מהפכת ה AI  בתחום האחזקה הוא עכשיו
+        </div>
+    </div>
+ </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+    <button class="nav-btn" onclick="previousSlide()">◀</button>
+    <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<div class="slide-counter">
+    <span id="currentSlide">1</span> / 10
+</div>
+
+<script>
+// Global variables
+let slideIndex = 0;
+const allSlides = document.querySelectorAll('.slide');
+const totalSlideCount = allSlides.length;
+
+// Main slide display function
+function displaySlide(index) {
+    allSlides.forEach((slide, i) => {
+        slide.classList.remove('active', 'prev');
+        if (i === index) {
+            slide.classList.add('active');
+        } else if (i < index) {
+            slide.classList.add('prev');
+        }
+    });
+    document.getElementById('currentSlide').textContent = index + 1;
+    
+    // Handle demo animations
+    handleSlideAnimations(index);
+}
+
+// Navigation functions
+function nextSlide() {
+    slideIndex = (slideIndex + 1) % totalSlideCount;
+    displaySlide(slideIndex);
+}
+
+function previousSlide() {
+    slideIndex = (slideIndex - 1 + totalSlideCount) % totalSlideCount;
+    displaySlide(slideIndex);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight' || event.key === ' ') nextSlide();
+    if (event.key === 'ArrowLeft') previousSlide();
+});
+
+// Handle animations for specific slides
+function handleSlideAnimations(index) {
+    switch(index) {
+        case 2:
+            setTimeout(() => runElevatorDemo(), 1000);
+            break;
+        case 3:
+            setTimeout(() => runEmergencyDemo(), 1000);
+            break;
+        case 4:
+            setTimeout(() => runMunicipalDemo(), 1000);
+            break;
+    }
+}
+
+// Demo simulations
+function runElevatorDemo() {
+    const chatArea = document.getElementById('elevatorChat');
+    const demoMessages = [
+        {
+            type: 'albert',
+            text: '🚨 זיהיתי תקלת מעלית - טיקט #2851 נפתח<br>📞 המוקדנית שלנו תתקשר אליך תוך דקה<br>⚡ טכנאי יגיע תוך 15 דקות',
+            delay: 2000
+        },
+        {
+            type: 'albert', 
+            text: '📢 עדכון לכל הדיירים:<br>מעלית ב\' תקועה זמנית<br>🔄 השתמשו במעלית א\' בינתיים<br>🔧 צפי תיקון: 30 דקות',
+            delay: 4000
+        },
+        {
+            type: 'user',
+            text: 'וואו! המוקדנית כבר התקשרה ופתחה קריאת שירות. תודה Albert! 👏',
+            delay: 6000
+        }
+    ];
+    addChatMessages(chatArea, demoMessages, 'Albert - מנהל המבנה');
+}
+
+function runEmergencyDemo() {
+    const chatArea = document.getElementById('emergencyChat');
+    const demoMessages = [
+        {
+            type: 'albert',
+            text: '📍 מרחבים מוגנים במבנה:<br>🏠 קומת מרתף - דלת ימין<br>🚗 חניון תת קרקעי - קיר מזרחי<br>🕐 זמינים 24/7',
+            delay: 3000
+        },
+        {
+            type: 'albert',
+            text: '✅ ביטול התראה<br>🌅 חזרה לשגרה בטוחה<br>תודה שנשמרתם על ההוראות!',
+            delay: 6000
+        }
+    ];
+    addChatMessages(chatArea, demoMessages, 'Albert - מנהל המבנה');
+}
+
+function runMunicipalDemo() {
+    const chatArea = document.getElementById('municipalChat');
+    const demoMessages = [
+        {
+            type: 'user',
+            text: 'מתי יחזרו המים? 💧',
+            delay: 2000
+        },
+        {
+            type: 'albert',
+            text: '⏰ המים יחזרו בשעה 18:00 כמתוכנן<br>📱 קיבלתי עדכון ממקורות שהעבודות מתקדמות לפי לוח הזמנים<br>🚿 לחץ המים יחזור הדרגתי',
+            delay: 4000
+        }
+    ];
+    addChatMessages(chatArea, demoMessages, 'Albert - מנהל המבנה');
+}
+
+// Helper function to add messages to chat
+function addChatMessages(chatArea, messages, albertName) {
+    // Keep only the first message
+    const firstMessage = chatArea.children[0];
+    chatArea.innerHTML = '';
+    chatArea.appendChild(firstMessage);
+
+    messages.forEach((msg) => {
+        setTimeout(() => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.type}`;
+            
+            let content = '';
+            if (msg.type === 'albert') {
+                content += `<div class="albert-indicator">${albertName}</div>`;
+            }
+            content += `<div class="message-bubble">${msg.text}</div>`;
+            
+            messageDiv.innerHTML = content;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }, msg.delay);
+    });
+}
+
+// Initialize presentation
+displaySlide(0);
+</script>
+</body>
+</html>
